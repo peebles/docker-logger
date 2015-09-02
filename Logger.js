@@ -81,11 +81,7 @@ module.exports = function( config, appname ) {
 	// with uncaught exceptions, level can be undefined
 	level = level || 'error';
 
-	var timestamp = moment().toISOString();
 	if ( _.isObject( meta ) ) {
-	    if ( meta.timestamp ) {
-		meta.timestamp = moment.unix( meta.timestamp ).toISOString();
-	    }
 	    if ( meta instanceof Error ) {
 		msg = msg + meta.stack;
 	    }
@@ -94,7 +90,12 @@ module.exports = function( config, appname ) {
 		meta = {};
 	    }
 	    else {
-		meta.timestamp = timestamp;
+		if ( meta.timestamp ) {
+		    meta.timestamp = moment.unix( meta.timestamp ).toISOString();
+		}
+		else {
+		    meta.timestamp = moment().toISOString();
+		}
 	    }
 	}
 
