@@ -94,13 +94,11 @@ the message will be formatted as follows:
         host: OS_HOSTNAME,
         level: MESSAGE_LEVEL, (info, error, debug, warn)
         message: LOG_MESSAGE,
-        timestamp: **SEE_BELOW**,
-        meta: { the metadata object, if any }
+        meta: { the metadata object, if any, with timestamp added }
     }
 
-The "timestamp" field defaults to now ( as an ISO date string ).  However, if you pass a "timestamp" field
-as part of your metadata, this is plucked out AS A UNIX EPOCH and converted to ISO and used as the timestamp.
-The original timestamp field inside the meta is removed.
+A "timestamp" field is added to meta and defaults to now ( as an ISO date string ).  However, if you pass a "timestamp" field
+as part of your metadata, this is interpretted AS A UNIX EPOCH and converted to ISO and written back as the timestamp.
 
 The UDP_META and TCP_META formats are designed to be used with Logstash and Elastic Search (and probably
 Kibana) to support the most flexible query environment.  The timestamp trick described above is so you can

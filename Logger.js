@@ -84,8 +84,7 @@ module.exports = function( config, appname ) {
 	var timestamp = moment().toISOString();
 	if ( _.isObject( meta ) ) {
 	    if ( meta.timestamp ) {
-		timestamp = moment.unix( meta.timestamp ).toISOString();
-		delete meta.timestamp;
+		meta.timestamp = moment.unix( meta.timestamp ).toISOString();
 	    }
 	    if ( meta instanceof Error ) {
 		msg = msg + meta.stack;
@@ -93,6 +92,9 @@ module.exports = function( config, appname ) {
 	    else if ( meta.stack && meta.stack.length ) {
 		msg = msg + meta.stack.join("\n");
 		meta = {};
+	    }
+	    else {
+		meta.timestamp = timestamp;
 	    }
 	}
 
@@ -110,7 +112,6 @@ module.exports = function( config, appname ) {
 		host: require('os').hostname(),
 		level: level,
 		message: msg,
-		timestamp: timestamp,
 		meta: meta,
 	    });
 	}
