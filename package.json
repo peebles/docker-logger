@@ -1,6 +1,6 @@
 {
   "name": "docker-logger",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Simple logger for cloud logging",
   "main": "Logger.js",
   "scripts": {
@@ -16,6 +16,7 @@
     "glossy": "^0.1.7",
     "lodash": "^3.10.1",
     "mkdirp": "^0.5.1",
+    "moment": "^2.10.6",
     "winston": "^1.0.1"
   }
 }
