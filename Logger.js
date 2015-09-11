@@ -121,7 +121,7 @@ module.exports = function( config, appname ) {
 	    process.exit(1);
 	}
 
-	if ( config.syslog.type == 'UDP_META' || config.syslog.stype.match( /^RFC/ ) ) {
+	if ( config.syslog.type == 'UDP_META' || config.syslog.type.match( /^RFC/ ) ) {
             try {
 		var client = dgram.createSocket('udp4');
 		client.send( new Buffer( msg ), 0, msg.length, _port, _server, function( err, bytes ) {
@@ -162,6 +162,8 @@ module.exports = function( config, appname ) {
 				}
 			    }
 			    socket.end();
+			    if ( config.exitOn.EADDRINFO && msg.match( 'EADDRINFO' ) ) process.exit(1);
+			    if ( callback ) callback( null, true );
 			});
 		    }
 		});
