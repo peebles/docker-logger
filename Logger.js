@@ -89,13 +89,8 @@ module.exports = function( config, appname ) {
 		msg = msg + meta.stack.join("\n");
 		meta = {};
 	    }
-	    else {
-		if ( meta.timestamp ) {
-		    meta.timestamp = moment.unix( meta.timestamp ).toISOString();
-		}
-		else {
-		    meta.timestamp = moment().toISOString();
-		}
+	    else if ( meta.timestamp ) {
+		meta.timestamp = moment.unix( meta.timestamp ).toISOString();
 	    }
 	}
 
