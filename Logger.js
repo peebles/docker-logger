@@ -34,6 +34,14 @@ var configDefaults = {
 	type: 'RFC5424',
 	facility: 'local0',
     },
+    meta: {
+	enabled: false,
+	level: 'info',
+	port: 3031,
+	server: 'localhost',
+	type: 'RFC5424',
+	facility: 'local0',
+    },
     console: {
 	enabled: true,
 	level: 'info',
@@ -52,25 +60,26 @@ module.exports = function( config, appname ) {
     _.defaultsDeep( config, configDefaults );
 
     var _appname = appname || defaultAppname();
-    var _level = config.syslog.level || 'info';
-    var _port  = config.syslog.port  || 3030;
-    var _server = config.syslog.server || 'localhost';
     
     var SysLogger = winston.transports.SysLogger = function( options ) {
         this.name  = 'sysLogger';
-        this.ident = _appname;
-        this.level = _level;
+        this.ident = options.appname;
+
+	this._port   = options.config.port   || 3030;
+	this._server = options.config.server || 'localhost';
+
+	this._config = options.config;
 
 	// If config.syslog.type matches one of the known RFC types,
 	// create a producer for sending syslog-complient messages.
-	if ( config.syslog.type == 'RFC5424' ||
-	     config.syslog.type == 'RFC3164' ) {
+	if ( this._config.type == 'RFC5424' ||
+	     this._config.type == 'RFC3164' ) {
             var GlossyProducer = glossy.Produce;
             this.producer = new GlossyProducer({
 		host:     require('os').hostname(),
 		appName:  this.ident,
-		type:     config.syslog.type,
-		facility: config.syslog.facility,
+		type:     this._config.type,
+		facility: this._config.facility,
             });
 	}
     };
@@ -94,7 +103,7 @@ module.exports = function( config, appname ) {
 	    }
 	}
 
-	if ( config.syslog.type == 'RFC5424' || config.syslog.type == 'RFC3164' ) {
+	if ( this._config.type == 'RFC5424' || this._config.type == 'RFC3164' ) {
 	    var args = [ '[' + level + ']', msg ];
 	    args.push( JSON.stringify( meta ) );
 	    msg = this.producer.produce({
@@ -102,7 +111,7 @@ module.exports = function( config, appname ) {
 		message: args.join( ' ' ),
             });
 	}
-	else if ( config.syslog.type == 'UDP_META' || config.syslog.type == 'TCP_META' ) {
+	else if ( this._config.type == 'UDP_META' || this._config.type == 'TCP_META' ) {
 	    msg = JSON.stringify({
 		program: _appname,
 		host: require('os').hostname(),
@@ -112,14 +121,14 @@ module.exports = function( config, appname ) {
 	    });
 	}
 	else {
-	    console.log( 'Logger: unsupported config.syslog.type:', config.syslog.type );
+	    console.log( 'Logger: unsupported this._config.type:', this._config.type );
 	    process.exit(1);
 	}
 
-	if ( config.syslog.type == 'UDP_META' || config.syslog.type.match( /^RFC/ ) ) {
+	if ( this._config.type == 'UDP_META' || this._config.type.match( /^RFC/ ) ) {
             try {
 		var client = dgram.createSocket('udp4');
-		client.send( new Buffer( msg ), 0, msg.length, _port, _server, function( err, bytes ) {
+		client.send( new Buffer( msg ), 0, msg.length, this._port, this._server, function( err, bytes ) {
 		    if ( err ) {
 			if ( config.exitOn.connectionErrors ) {
 			    console.log( 'UDP_META connection problems:', err.message );
@@ -137,10 +146,10 @@ module.exports = function( config, appname ) {
 		}
             }
 	}
-	else if ( config.syslog.type == 'TCP_META' ) {
+	else if ( this._config.type == 'TCP_META' ) {
 	    try {
 		var socket = new net.Socket();
-		socket.connect( _port, _server, function( err ) {
+		socket.connect( this._port, this._server, function( err ) {
 		    if ( err ) {
 			console.log( err );
 			if ( config.exitOn.connectionErrors ) {
@@ -157,7 +166,9 @@ module.exports = function( config, appname ) {
 				}
 			    }
 			    socket.end();
-			    if ( config.exitOn.EADDRINFO && msg.match( 'EADDRINFO' ) ) process.exit(1);
+			    if ( config.exitOn.EADDRINFO && msg.match( 'EADDRINFO' ) ) {
+				process.exit(1);
+			    }
 			    if ( callback ) callback( null, true );
 			});
 		    }
@@ -216,12 +227,14 @@ module.exports = function( config, appname ) {
     var syslogExceptions = new SysLogger({
         prettyPrint: true,
         appname: _appname,
-        level: _level
+	level: config.syslog.level || 'info',
+	config: config.syslog,
     });
 
     var syslogConsole = new SysLogger({
         appname: _appname,
-        level: _level
+	level: config.syslog.level || 'info',
+	config: config.syslog,
     });
 
     _transports = [];
@@ -290,6 +303,18 @@ module.exports = function( config, appname ) {
         exceptionHandlers: _exceptions,
         exitOnError: true        // running under forever, let the process die
     });
+
+    if ( config.meta.enabled ) {
+	var metaConsole = new SysLogger({
+            appname: _appname,
+	    level: config.meta.level || 'info',
+	    config: config.meta,
+	});
+
+	winston.loggers.add( 'meta', {
+	    transports: [ metaConsole ],
+	});
+    }
 
     patchMeta( _log );
 

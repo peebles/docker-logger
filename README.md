@@ -51,6 +51,14 @@ The default configuration is:
             type: 'RFC5424',
             facility: 'local0',
         },
+        meta: {
+            enabled: false,
+            level: 'info',
+            port: 3031,
+            server: 'localhost',
+            type: 'TCP_META',
+            facility: 'local0',
+        },
         console: {
             enabled: true,
             level: 'info',
@@ -69,6 +77,17 @@ a configuration with only the changes you want.  For example:
         syslog: { enabled: true, type: 'UDP_META', port: 514 },
         file: { enabled: true: location: '/mnt/logs' }
     });
+
+META Logger
+-----------
+
+Sometimes you may wish to log pure metadata, in particular to Elasticsearch via logstash.  You can do this
+my enabling the "meta" section, and thin in your code:
+
+    var mlog = require( 'winston' ).loggers.get( 'meta' );
+    mlog.info( 'my-object', { "key": "val" }, function( err ) {} );
+
+This logger will not go to console or to file.  It is intended only to get JSON objects into elastic search.
     
 exitOn
 ------
