@@ -5,13 +5,13 @@ var c = {
     syslog: {
 	enabled: true,
 	port: 3030,
-	server: '52.0.83.232',
+	server: '52.20.100.131',
 	type: 'UDP_META',
     },
     meta: {
 	enabled: true,
 	port: 3031,
-	server: '52.0.83.232',
+	server: '52.20.100.131',
 	type: 'TCP_META',
     }
 };

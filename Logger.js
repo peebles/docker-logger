@@ -64,6 +64,7 @@ module.exports = function( config, appname ) {
     var SysLogger = winston.transports.SysLogger = function( options ) {
         this.name  = 'sysLogger';
         this.ident = options.appname;
+	this.level = options.level;
 
 	this._port   = options.config.port   || 3030;
 	this._server = options.config.server || 'localhost';
