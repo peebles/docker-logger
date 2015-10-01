@@ -200,8 +200,8 @@ module.exports = function( config, appname ) {
 		    if ( config.exitOn.errorFatal ) {
 			// This is a check for fatal errors which will cause the process to exit, to
 			// be restarted by forever.  These errors include Bookshelf/Knex.
-			if ( meta.fatal || ( meta.code && meta.code.match( /^ER_/ ) ) ) {
-                            var code = ( meta.code && meta.code.match( /^ER_/ ) ) ? meta.code : '';
+			if ( meta.fatal || ( meta.code && meta.code.toString().match( /^ER_/ ) ) ) {
+                            var code = ( meta.code && meta.code.toString().match( /^ER_/ ) ) ? meta.code : '';
                             callback = function() {
 				__log.apply( logger, [ 'error', 'Fatal error detected, shutting down.', code, function() {
                                     setTimeout( function() {
