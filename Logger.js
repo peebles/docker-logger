@@ -20,6 +20,7 @@ function defaultAppname() {
 }
 
 var configDefaults = {
+    includeNodeEnv: false,
     exitOn: {
 	EADDRINFO: true,
 	errorFatal: true,
@@ -102,6 +103,11 @@ module.exports = function( config, appname ) {
 	    else if ( meta.timestamp ) {
 		meta.timestamp = moment.unix( meta.timestamp ).toISOString();
 	    }
+	}
+
+	if ( config.includeNodeEnv ) {
+	    meta = _.cloneDeep( meta ); // make sure we don't mess up user's original meta!
+	    meta.env = process.env.NODE_ENV;
 	}
 
 	if ( this._config.type == 'RFC5424' || this._config.type == 'RFC3164' ) {
