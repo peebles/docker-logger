@@ -101,7 +101,8 @@ module.exports = function( config, appname ) {
 		meta = {};
 	    }
 	    else if ( meta.timestamp ) {
-		meta.timestamp = moment.unix( meta.timestamp ).toISOString();
+	      if ( ! ( meta.timestamp > 0xffffffff ) ) meta.timestamp = meta.timestamp * 1000;
+		meta.timestamp = moment( meta.timestamp ).toISOString();
 	    }
 	}
 
