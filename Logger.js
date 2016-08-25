@@ -92,7 +92,11 @@ module.exports = function( config, appname ) {
 	// with uncaught exceptions, level can be undefined
 	level = level || 'error';
 
-	if ( _.isObject( meta ) ) {
+        if ( _.isObject( meta ) ) {
+	    meta = _.cloneDeep( meta ); // make sure we don't mess up user's original meta!
+        }
+      
+        if ( _.isObject( meta ) ) {
 	    if ( meta instanceof Error ) {
 		msg = msg + meta.stack;
 	    }
@@ -107,7 +111,6 @@ module.exports = function( config, appname ) {
 	}
 
 	if ( config.includeNodeEnv ) {
-	    meta = _.cloneDeep( meta ); // make sure we don't mess up user's original meta!
 	    meta.env = process.env.NODE_ENV;
 	}
 
