@@ -1,10 +1,10 @@
 {
   "name": "docker-logger",
-  "version": "0.0.13",
+  "version": "0.0.14",
   "description": "Simple logger for cloud logging",
-  "main": "Logger.js",
+  "main": "index.js",
   "scripts": {
-    "test": "t.js"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Andrew Peebles",
   "repository": {
@@ -14,9 +14,8 @@
   "license": "ISC",
   "dependencies": {
     "glossy": "^0.1.7",
-    "lodash": "^3.10.1",
+    "lodash": "^4.17.2",
     "mkdirp": "^0.5.1",
-    "moment": "^2.10.6",
-    "winston": "^1.0.1"
+    "winston": "^2.3.0"
   }
 }
