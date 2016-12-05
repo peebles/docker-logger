@@ -1,0 +1,100 @@
+{
+  "name": "winston-logstash",
+  "version": "0.3.0",
+  "description": "A Logstash transport for winston",
+  "main": "./lib/winston-logstash",
+  "homepage": "https://github.com/jaakkos/winston-logstash",
+  "scripts": {
+    "test": "node_modules/mocha/bin/mocha test/*_test.js"
+  },
+  "engines": {
+    "node": ">=0.8.x"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jaakkos/winston-logstash.git"
+  },
+  "peerDependencies": {
+    "winston": ">=0.7.3"
+  },
+  "devDependencies": {
+    "chai": ">=2.3.0",
+    "mocha": ">=2.2.4",
+    "timekeeper": ">=0.0.5",
+    "winston": ">=0.7.3"
+  },
+  "keywords": [
+    "logging",
+    "sysadmin",
+    "tools"
+  ],
+  "bugs": {
+    "url": "https://github.com/jaakkos/winston-logstash/issues"
+  },
+  "author": {
+    "name": "Jaakko Suutarla",
+    "email": "jaakko@suutarla.com"
+  },
+  "license": "MIT",
+  "contributors": [
+    {
+      "name": "Jaakko Suutarla",
+      "email": "jaakko@suutarla.com"
+    },
+    {
+      "name": "Chris Saylor",
+      "email": "cjsaylor@gmail.com"
+    },
+    {
+      "name": "djmax"
+    },
+    {
+      "name": "gwhitelaw"
+    },
+    {
+      "name": "Ivan Fraixedes"
+    },
+    {
+      "name": "kgoerlitz"
+    },
+    {
+      "name": "Akta3d"
+    },
+    {
+      "name": "KamalAman"
+    }
+  ],
+  "maintainers": [
+    {
+      "name": "djmax",
+      "email": "max@pyralis.com"
+    },
+    {
+      "name": "jaakkos",
+      "email": "jaakko@suutarla.com"
+    }
+  ],
+  "directories": {
+    "doc": "docs",
+    "test": "test"
+  },
+  "gitHead": "06260439c2c638a04d6fdd3db4c917a01e4424b3",
+  "_id": "winston-logstash@0.3.0",
+  "_shasum": "f71fa1278be1f0eae83bcad3e22fe41d51c7f1a9",
+  "_from": "winston-logstash@latest",
+  "_npmVersion": "3.10.3",
+  "_nodeVersion": "6.7.0",
+  "_npmUser": {
+    "name": "djmax",
+    "email": "max@pyralis.com"
+  },
+  "dist": {
+    "shasum": "f71fa1278be1f0eae83bcad3e22fe41d51c7f1a9",
+    "tarball": "https://registry.npmjs.org/winston-logstash/-/winston-logstash-0.3.0.tgz"
+  },
+  "_npmOperationalInternal": {
+    "host": "packages-12-west.internal.npmjs.com",
+    "tmp": "tmp/winston-logstash-0.3.0.tgz_1477319587105_0.21854850673116744"
+  },
+  "_resolved": "https://registry.npmjs.org/winston-logstash/-/winston-logstash-0.3.0.tgz"
+}
