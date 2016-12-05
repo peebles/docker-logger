@@ -7,7 +7,7 @@ var opts = {
     connectionErrors: false,
   },
   syslog: {
-    enabled: true,
+    enabled: false,
     level: 'info',
     port: 3030,
     server: '52.36.116.222',
@@ -26,7 +26,7 @@ var opts = {
     level: 'info',
   },
   file: {
-    enabled: true,
+    enabled: false,
     level: 'info',
     location: '/tmp',
   }
@@ -36,6 +36,7 @@ var log = require( './index' )( opts );
 log.info( 'This is a message with no meta' );
 log.info( 'This is a message with meta:', { foo: 'bar' } );
 log.info( 'This is a message with a timestamp', { cameraId: 'xyz', timestamp: 1480957640764 } );
+log.info( 'This is a fake stack', { trace: [], stack: "I am\na stck!" });
 setTimeout( function() {
   a = b.c;
 }, 1000 );

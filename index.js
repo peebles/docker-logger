@@ -70,7 +70,10 @@ module.exports = function( _config, _appname ) {
 	colorize: true,
 	prettyPrint: function( meta ) {
 	  if ( meta && meta.trace && meta.stack && meta.stack.length ) {
-	    return "\n" + meta.stack.slice(1).join( "\n" );
+	    if ( Array.isArray( meta.stack ) )
+	      return "\n" + meta.stack.slice(1).join( "\n" );
+	    else
+	      return "\n" + meta.stack;
 	  }
 	  if ( config.includeNodeEnv ) {
 	    if ( ! meta ) meta = { env: process.env.NODE_ENV };
@@ -144,7 +147,10 @@ module.exports = function( _config, _appname ) {
 	timestamp: true,
 	prettyPrint: function( meta ) {
 	  if ( meta && meta.trace && meta.stack && meta.stack.length ) {
-	    return "\n" + meta.stack.slice(1).join( "\n" );
+	    if ( Array.isArray( meta.stack ) )
+	      return "\n" + meta.stack.slice(1).join( "\n" );
+	    else
+	      return "\n" + meta.stack;
 	  }
 	  if ( config.includeNodeEnv ) {
 	    if ( ! meta ) meta = { env: process.env.NODE_ENV };
