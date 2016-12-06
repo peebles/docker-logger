@@ -7,7 +7,7 @@ var opts = {
     connectionErrors: false,
   },
   syslog: {
-    enabled: false,
+    enabled: true,
     level: 'info',
     port: 3030,
     server: '52.36.116.222',
@@ -39,4 +39,4 @@ log.info( 'This is a message with a timestamp', { cameraId: 'xyz', timestamp: 14
 log.info( 'This is a fake stack', { trace: [], stack: "I am\na stck!" });
 setTimeout( function() {
   a = b.c;
-}, 1000 );
+}, 5000 );
