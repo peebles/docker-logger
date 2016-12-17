@@ -88,7 +88,6 @@ module.exports = function( _config, _appname ) {
   if ( config.syslog.enabled ) {
     transports.push(
       new (winston.transports.Glossy)({
-	name: 'syslog-glossy',
 	handleExceptions: true,
 	humanReadableUnhandledException: true,
 
@@ -108,25 +107,25 @@ module.exports = function( _config, _appname ) {
   }
 
   if ( config.meta.enabled ) {
-    transports.push(
-      new (winston.transports.Glossy)({
-	name: 'meta-glossy',
-	handleExceptions: true,
-	humanReadableUnhandledException: true,
+    let metaConsole = new (winston.transports.Glossy)({
+      handleExceptions: true,
+      humanReadableUnhandledException: true,
 
-	level: config.meta.level,
-	json: true,
-
-	type: config.meta.type,
-	facility: config.meta.facility,
+      level: config.meta.level,
+      json: true,
+      
+      type: config.meta.type,
+      facility: config.meta.facility,
 	
-	node_name: appname,
-	host: config.meta.server,
-	port: config.meta.port,
-	
-	includeNodeEnv: config.includeNodeEnv,
-      })
-    );
+      node_name: appname,
+      host: config.meta.server,
+      port: config.meta.port,
+      
+      includeNodeEnv: config.includeNodeEnv,
+    });
+    winston.loggers.add( 'meta', {
+      transports: [ metaConsole ],
+    });
   }
 
   if ( config.file.enabled ) {
