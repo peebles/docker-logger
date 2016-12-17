@@ -88,6 +88,7 @@ module.exports = function( _config, _appname ) {
   if ( config.syslog.enabled ) {
     transports.push(
       new (winston.transports.Glossy)({
+	name: 'syslog-glossy',
 	handleExceptions: true,
 	humanReadableUnhandledException: true,
 
@@ -109,6 +110,7 @@ module.exports = function( _config, _appname ) {
   if ( config.meta.enabled ) {
     transports.push(
       new (winston.transports.Glossy)({
+	name: 'meta-glossy',
 	handleExceptions: true,
 	humanReadableUnhandledException: true,
 
