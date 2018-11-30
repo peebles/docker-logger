@@ -5,6 +5,7 @@ let path = require( 'path' );
 let fs = require( 'fs' );
 let mkdirp = require( 'mkdirp' );
 let defaultsDeep = require( 'lodash/defaultsDeep' );
+let WinstonCloudWatch = require( 'winston-cloudwatch' );
 
 // with my own custom hacks using glossy
 require('./lib/winston-logstash');
@@ -59,7 +60,7 @@ module.exports = function( _config, _appname ) {
 
   let transports = [];
 
-  if ( config.console.enabled ) {
+  if ( config.console && config.console.enabled ) {
     transports.push(
       new (winston.transports.Console)({
 	handleExceptions: true,
@@ -85,7 +86,7 @@ module.exports = function( _config, _appname ) {
     );
   }
 
-  if ( config.syslog.enabled ) {
+  if ( config.syslog && config.syslog.enabled ) {
     transports.push(
       new (winston.transports.Glossy)({
 	handleExceptions: true,
@@ -106,7 +107,7 @@ module.exports = function( _config, _appname ) {
     );
   }
 
-  if ( config.meta.enabled ) {
+  if ( config.meta && config.meta.enabled ) {
     let metaConsole = new (winston.transports.Glossy)({
       handleExceptions: true,
       humanReadableUnhandledException: true,
@@ -128,7 +129,7 @@ module.exports = function( _config, _appname ) {
     });
   }
 
-  if ( config.file.enabled ) {
+  if ( config.file && config.file.enabled ) {
     try {
       if ( ! fs.lstatSync( config.file.location ).isDirectory() )
         mkdirp.sync( config.file.location );
@@ -160,6 +161,50 @@ module.exports = function( _config, _appname ) {
 	  return JSON.stringify( meta );
 	},
 	filename: path.join( config.file.location, appname + '.log' ),
+      })
+    );
+  }
+
+  if ( config.cloudwatch && config.cloudwatch.enabled ) {
+
+    let streamName = config.cloudwatch.stream || appname;
+
+    const formatError = (e, lvl) => {
+      return {
+        message: e.message,
+        level: lvl || 'error',
+        stack: e.stack
+      };
+    };
+
+    let startTime = new Date().toISOString();
+    const crypto = require('crypto');
+
+    transports.push(
+      new WinstonCloudWatch({
+        level: config.cloudwatch.level || 'debug',
+        handleExceptions: true,
+        humanReadableUnhandledException: true,
+        awsAccessKeyId: config.cloudwatch.awsAccessKeyId || process.env.AWS_ACCESS_KEY_ID,
+        awsSecretKey: config.cloudwatch.awsSecretKey || process.env.AWS_SECRET_KEY,
+        awsRegion: config.cloudwatch.awsRegion || process.env.AWS_REGION,
+        logGroupName: config.cloudwatch.group || process.env.NODE_ENV || 'local',
+        logStreamName: () => {
+          let date = new Date().toISOString().split('T')[0];
+          return streamName + '.' + date + '-' +
+                 crypto.createHash('md5')
+                       .update(startTime)
+                       .digest('hex');
+        },
+        messageFormatter: (msg) => {
+          if ( msg instanceof Error ) msg = formatError( msg, msg.level );
+          if ( msg.meta && msg.meta instanceof Error ) msg.meta = formatError( msg.meta, msg.level );
+          msg.program = appname;
+          if ( config.includeNodeEnv ) {
+            msg.env = process.env.NODE_ENV;
+          }
+          return JSON.stringify( msg );
+        }
       })
     );
   }

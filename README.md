@@ -67,6 +67,15 @@ The default configuration is:
             enabled: false,
             level: 'info',
             location: '/tmp',
+        },
+        cloudwatch: {
+          enabled: false,
+          level: 'debug',
+          awsAccessKeyId: 'your key',
+          awsSecretKey: 'your secret',
+          awsRegion: 'your region',
+          group: 'cloud watch group name',
+          stream: 'cloud watch stream name'
         }
     }
 
@@ -122,6 +131,31 @@ as part of your metadata, this is interpretted AS A UNIX EPOCH and converted to 
 The UDP_META and TCP_META formats are designed to be used with Logstash and Elastic Search (and probably
 Kibana) to support the most flexible query environment.  The timestamp trick described above is so you can
 write data in the past (for debugging perhaps) and be able to query and sort based on that timestamp.
+
+CloudWatch
+----------
+
+The AWS credentials will default (if not specified) to these environment variables:
+
+* AWS_ACCESS_KEY_ID
+* AWS_SECRET_KEY
+* AWS_REGION
+
+The CloudWatch `group` will default to process.env.NODE_ENV if not specified.  The `stream` name defaults to the
+environment variable APP_NAME.
+
+The idea is to group multiple applications under their stack, so you can use something like
+[awslogs](https://github.com/jorgebastida/awslogs) and get logs like this to mix all of the apps in the stack together:
+
+```sh
+awslogs get staging ALL --start='1d ago' --timestamp --profile aws-profile-name
+```
+
+or to get just one app:
+
+```sh
+awslogs get staging "webserver*" --start='1d ago' --timestamp --profile aws-profile-name
+```
 
 Docker Considerations and Cloud Logging
 ---------------------
