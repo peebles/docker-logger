@@ -167,6 +167,8 @@ module.exports = function( _config, _appname ) {
 
   if ( config.cloudwatch && config.cloudwatch.enabled ) {
 
+    if ( config.cloudwatch.debug ) console.log( 'enabling cloudwatch logger with env:', process.env );
+
     let streamName = config.cloudwatch.stream || appname;
 
     const formatError = (e, lvl) => {
@@ -181,7 +183,6 @@ module.exports = function( _config, _appname ) {
     const crypto = require('crypto');
 
     transports.push(
-      if ( config.cloudwatch.debug ) console.log( 'enabling cloudwatch logger with env:', process.env );
       new WinstonCloudWatch({
         level: config.cloudwatch.level || 'debug',
         uploadRate: config.cloudwatch.uploadRate || 2000,
