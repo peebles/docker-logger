@@ -183,6 +183,8 @@ module.exports = function( _config, _appname ) {
     transports.push(
       new WinstonCloudWatch({
         level: config.cloudwatch.level || 'debug',
+        uploadRate: config.cloudwatch.uploadRate || 2000,
+        retentionInDays: config.cloudwatch.retentionInDays || 0,
         handleExceptions: true,
         humanReadableUnhandledException: true,
         awsAccessKeyId: config.cloudwatch.awsAccessKeyId || process.env.AWS_ACCESS_KEY_ID,
@@ -203,6 +205,7 @@ module.exports = function( _config, _appname ) {
           if ( config.includeNodeEnv ) {
             msg.env = process.env.NODE_ENV;
           }
+          if ( config.cloudwatch.debug ) console.log( 'writing to cloudwatch:', JSON.stringify( msg ) );
           return JSON.stringify( msg );
         }
       })
