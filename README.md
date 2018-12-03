@@ -138,7 +138,7 @@ CloudWatch
 The AWS credentials will default (if not specified) to these environment variables:
 
 * AWS_ACCESS_KEY_ID
-* AWS_SECRET_KEY
+* AWS_SECRET_ACCESS_KEY
 * AWS_REGION
 
 The CloudWatch `group` will default to process.env.NODE_ENV if not specified.  The `stream` name defaults to the

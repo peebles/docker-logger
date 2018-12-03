@@ -186,7 +186,7 @@ module.exports = function( _config, _appname ) {
         handleExceptions: true,
         humanReadableUnhandledException: true,
         awsAccessKeyId: config.cloudwatch.awsAccessKeyId || process.env.AWS_ACCESS_KEY_ID,
-        awsSecretKey: config.cloudwatch.awsSecretKey || process.env.AWS_SECRET_KEY,
+        awsSecretKey: config.cloudwatch.awsSecretKey || process.env.AWS_SECRET_ACCESS_KEY,
         awsRegion: config.cloudwatch.awsRegion || process.env.AWS_REGION,
         logGroupName: config.cloudwatch.group || process.env.NODE_ENV || 'local',
         logStreamName: () => {
