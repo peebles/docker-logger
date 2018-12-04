@@ -1,6 +1,6 @@
 {
   "name": "docker-logger",
-  "version": "0.0.27",
+  "version": "0.0.28",
   "description": "Simple logger for cloud logging",
   "main": "index.js",
   "scripts": {

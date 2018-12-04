@@ -71,11 +71,17 @@ The default configuration is:
         cloudwatch: {
           enabled: false,
           level: 'debug',
+          stringify: true
           awsAccessKeyId: 'your key',
           awsSecretKey: 'your secret',
           awsRegion: 'your region',
           group: 'cloud watch group name',
           stream: 'cloud watch stream name'
+        },
+        lambda: {
+          enabled: false,
+          level: 'debug',
+          stringify: true
         }
     }
 
@@ -156,6 +162,35 @@ or to get just one app:
 ```sh
 awslogs get staging "webserver*" --start='1d ago' --timestamp --profile aws-profile-name
 ```
+
+Lambda
+------
+
+When a function is executing as a Lambda function, about the best you can do is write to the console.  This will incure no
+hit on the user latency and automatically write into CloudWatch.  The "lambda" section of this model's config uses the
+winston `Console` transport, but formats the message to be consistent with `CloudWatch` above.  This means you can use
+"cloudwatch" for long running servers and "lambda" for lambda functions and the messages will be consistent.  Namely they
+will be in JSON and have this format:
+
+```js
+{
+  level: "LEVEL",
+  message: "MESSAGE",
+  program: "PROGRAM_NAME", // typically process.env.APP_NAME
+  env: "NODE_ENV", // if includeNodeEnv==true
+  meta: { meta }
+}
+```
+
+If the entire stack is running with "cloudwatch" and "lambda" then you can consistently use something like:
+
+```sh
+awslogs get /aws/lambda/db-server  ALL --start='1d ago' --query='[level,message]' --timestamp --filter-pattern='{$.level = "info"}' --profile sm
+```
+
+Also, [see this article](https://theburningmonk.com/2017/08/centralised-logging-for-aws-lambda/) on ideas for how to
+aggregate these logs to some central long term storage.
+
 
 Docker Considerations and Cloud Logging
 ---------------------

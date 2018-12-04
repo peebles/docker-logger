@@ -46,6 +46,14 @@ let configDefaults = {
     enabled: true,
     level: 'info',
   },
+  cloudwatch: {
+    enabled: false,
+    stringify: true
+  },
+  lambda: {
+    emabled: false,
+    stringify: true
+  },
   file: {
     enabled: false,
     level: 'info',
@@ -60,6 +68,11 @@ module.exports = function( _config, _appname ) {
 
   let transports = [];
 
+  if ( config.console && config.console.enabled &&
+       config.lambda && config.lambda.enabled ) {
+         throw( new Error( 'Cannot enable both console and lambda at the same time!  Both write to stadout.' ) );
+  }
+  
   if ( config.console && config.console.enabled ) {
     transports.push(
       new (winston.transports.Console)({
@@ -171,6 +184,9 @@ module.exports = function( _config, _appname ) {
 
     let streamName = config.cloudwatch.stream || appname;
 
+    let startTime = new Date().toISOString();
+    const crypto = require('crypto');
+
     const formatError = (e, lvl) => {
       return {
         message: e.message,
@@ -178,9 +194,6 @@ module.exports = function( _config, _appname ) {
         stack: e.stack
       };
     };
-
-    let startTime = new Date().toISOString();
-    const crypto = require('crypto');
 
     transports.push(
       new WinstonCloudWatch({
@@ -197,8 +210,8 @@ module.exports = function( _config, _appname ) {
           let date = new Date().toISOString().split('T')[0];
           return streamName + '.' + date + '-' +
                  crypto.createHash('md5')
-                       .update(startTime)
-                       .digest('hex');
+                               .update(startTime)
+                               .digest('hex');
         },
         messageFormatter: (msg) => {
           if ( msg instanceof Error ) msg = formatError( msg, msg.level );
@@ -208,7 +221,57 @@ module.exports = function( _config, _appname ) {
             msg.env = process.env.NODE_ENV;
           }
           if ( config.cloudwatch.debug ) console.log( 'writing to cloudwatch:', JSON.stringify( msg ) );
-          return JSON.stringify( msg );
+          msg.message = msg.msg;
+          delete msg.msg;
+          if ( config.cloudwatch.stringify ) 
+            return JSON.stringify( msg );
+          else
+            return msg;
+        }
+      })
+    );
+  }
+
+  if ( config.lambda && config.lambda.enabled ) {
+
+    const formatError = (e, lvl) => {
+      return {
+        message: e.message,
+        level: lvl || 'error',
+        stack: e.stack
+      };
+    };
+
+    transports.push(
+      new (winston.transports.Console)({
+        handleExceptions: true,
+        humanReadableUnhandledException: true,
+        level: config.lambda.level,
+        formatter: function(msg) {
+          if ( msg instanceof Error ) msg = formatError( msg, msg.level );
+          if ( msg.meta && msg.meta instanceof Error ) msg.meta = formatError( msg.meta, msg.level );
+	  if ( msg.meta && msg.meta.trace && msg.meta.stack && msg.meta.stack.length ) {
+            msg.meta = {
+              stack: msg.meta.stack,
+            };
+          }
+          msg.program = appname;
+          if ( config.includeNodeEnv ) {
+            msg.env = process.env.NODE_ENV;
+          }
+          let newMsg = {
+            level: msg.level,
+            message: msg.message,
+            program: msg.program,
+            env: msg.env,
+            meta: msg.meta,
+          };
+          if ( config.lambda.stringify ) {
+            return JSON.stringify( newMsg );
+          }
+          else {
+            return newMsg;
+          }
         }
       })
     );
