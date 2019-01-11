@@ -223,10 +223,12 @@ module.exports = function( _config, _appname ) {
           if ( config.cloudwatch.debug ) console.log( 'writing to cloudwatch:', JSON.stringify( msg ) );
           msg.message = msg.msg;
           delete msg.msg;
+          // Add ISO timestamp and "0-0" (request id) to make these strings look like console.log()s
+          // in lambda functions.
           if ( config.cloudwatch.stringify ) 
-            return JSON.stringify( msg );
+            return `${new Date().toISOString()} 0-0 ${JSON.stringify( msg )}`;
           else
-            return msg;
+            return `${new Date().toISOString()} 0-0 ${msg}`;
         }
       })
     );
