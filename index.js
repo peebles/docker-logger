@@ -4,7 +4,7 @@ let winston = require( 'winston' );
 let path = require( 'path' );
 let fs = require( 'fs' );
 let mkdirp = require( 'mkdirp' );
-let defaultsDeep = require( 'lodash/defaultsDeep' );
+let defaultsDeep = require( 'lodash.defaultsdeep' );
 let WinstonCloudWatch = require( 'winston-cloudwatch' );
 
 // with my own custom hacks using glossy
