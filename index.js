@@ -235,7 +235,6 @@ module.exports = function( _config, _appname ) {
   }
 
   if ( config.lambda && config.lambda.enabled ) {
-
     const formatError = (e, lvl) => {
       return {
         message: e.message,
@@ -268,11 +267,13 @@ module.exports = function( _config, _appname ) {
             env: msg.env,
             meta: msg.meta,
           };
+          // Add ISO timestamp and "0-0" (request id) to make these strings look like console.log()s
+          // in lambda functions.
           if ( config.lambda.stringify ) {
-            return JSON.stringify( newMsg );
+            return `${new Date().toISOString()} 0-0 ${JSON.stringify( newMsg )}`;
           }
           else {
-            return newMsg;
+            return `${new Date().toISOString()} 0-0 ${newMsg}`;
           }
         }
       })
